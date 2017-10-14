@@ -1,0 +1,32 @@
+//
+//  TasksDynamicProgramming.pch
+//  任务动态规划
+//
+//  Created by Axc on 2017/9/18.
+//  Copyright © 2017年 Axc. All rights reserved.
+//
+
+#ifndef TasksDynamicProgramming_pch
+#define TasksDynamicProgramming_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#endif /* TasksDynamicProgramming_pch */
+
+
+#ifdef __OBJC__
+
+#import "AxcUIKit.h"
+
+#import "AxcBaseButton.h"
+#import "AxcBaseTextFiled.h"
+#import "AxcBaseLabel.h"
+
+#import "Define.h"
+
+#import <Masonry.h>
+#import <IQKeyboardManager.h>
+#import <MJRefresh.h>
+
+#endif /* TasksDynamicProgramming_pch */
