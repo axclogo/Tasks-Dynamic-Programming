@@ -30,40 +30,6 @@
     return saveDic;
 }
 
-#pragma mark - 重写比较规则
-- (NSUInteger)hash{
-    return self.name.length + self.name.hash + self.priority;
-}
-
-- (BOOL)isEqual:(AxcBaseModel *)object
-{
-    return [self isEqualToAxcModel:object];
-}
-
-- (BOOL)isEqualToAxcModel:(AxcBaseModel *)model
-{
-    // 如果是完全相同的对象，就省去后面的判断
-    if (self == model) return YES;
-    
-    // 如果object的类型不对，就不需要比较
-    if (![model isKindOfClass:self.class]) return NO;
-    
-    // 基本数据类型
-    BOOL result = ([self.name isEqualToString:model.name] &&
-                   self.priority == model.priority);
-    if (result == NO) return result;
-    
-    // 对象类型,两个对象为nil时isEqual:的结果为0(NO),所以需要专门处理
-    if (self.name || model.name) {
-        if (![self.name isEqual:model.name]) return NO;
-    }
-    
-    if (self.priority || model.priority) {
-        if (self.priority == model.priority) return NO;
-    }
-    
-    return YES;
-}
 
 
 
@@ -77,8 +43,10 @@
         properties = class_copyPropertyList(recursive, &count);
     }else{
         properties = class_copyPropertyList([model class], &count);
-        [userDic setObject:self.name forKey:@"name"];
-        [userDic setObject:@(self.priority) forKey:@"priority"];
+        [userDic setObject:self.name forKey:ModelName];
+        [userDic setObject:self.addDate forKey:ModelAddDate];
+        [userDic setObject:@(self.priority) forKey:ModelPriority];
+        [userDic setObject:self.noteString forKey:ModelNoteString];
     }
     for (int i = 0; i < count; i++) {
         const char *name = property_getName(properties[i]);
@@ -91,7 +59,6 @@
             if (propertyValue) {
                 [userDic setObject:propertyValue forKey:propertyName];
             }
-
         }
     }
     free(properties);
@@ -127,11 +94,18 @@
 // 设置默认时间
 - (NSString *)addDate{
     if (!_addDate) {
-        _addDate = @"未被记录的时间戳";
+        _addDate = defaultPlaceholderText;
     }
     return _addDate;
 }
 
+// 设置默认备注
+- (NSString *)noteString{
+    if (!_noteString) {
+        _noteString = defaultPlaceholderText;
+    }
+    return _noteString;
+}
 
 
 @end

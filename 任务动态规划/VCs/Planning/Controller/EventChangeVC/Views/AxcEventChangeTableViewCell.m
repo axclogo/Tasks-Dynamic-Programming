@@ -14,6 +14,7 @@
 
 #define WeakSelf __weak typeof(self) weakSelf = self;
 
+
 @implementation AxcEventChangeTableViewCell
 
 - (void)awakeFromNib {
@@ -24,8 +25,33 @@
     
 }
 
+- (void)emptyControl{
+    if (self.textLabel.text.length) {
+        self.textLabel.text = nil;
+    }
+    if (_noteTextView) {
+        [_noteTextView removeFromSuperview];
+        _noteTextView = nil;
+    }
+    if (_subtitleLabel) {
+        [_subtitleLabel removeFromSuperview];
+        _subtitleLabel = nil;
+    }
+    if (_priorityStartRatingView) {
+        [_priorityStartRatingView removeFromSuperview];
+        _priorityStartRatingView = nil;
+    }
+    if (_simulationDescribeLabel) {
+        [_simulationDescribeLabel removeFromSuperview];
+        _simulationDescribeLabel = nil;
+    }
+}
+
 - (void)setModelMsgDic:(NSDictionary *)modelMsgDic{
     _modelMsgDic = modelMsgDic;
+
+    [self emptyControl];
+    
     WeakSelf;
     switch (weakSelf.type) {
         case AxcEventTypeFourElements:// 事件四要素
@@ -40,7 +66,11 @@
         case AxcEventTypePriority:// 事件优先级
         {
             CGFloat priority = [[modelMsgDic objectForKey:kElementsContent] floatValue];
-            self.priorityStartRatingView.axcUI_value = priority;
+            weakSelf.priorityStartRatingView.axcUI_value = priority;
+        }break;
+        case AxcEventTypeNoteString:// 事件备注
+        {
+            weakSelf.noteTextView.text = [modelMsgDic objectForKey:kElementsContent];
         }break;
         case AxcEventTypeCreateDate:// 事件创建时间
         {
@@ -69,13 +99,81 @@
     self.subtitleLabel.axcUI_Width = [self.subtitleString AxcUI_widthWithStringFont:_subtitleLabel.font];
 }
 
+
+#pragma mark - 回调
 - (void)starRatingViewDidChangeValue:(AxcUI_StarRatingView *)sender { // 数值
     if (self.delegate && [self.delegate respondsToSelector:@selector(changePriority:)]) {
         [self.delegate changePriority:sender.axcUI_value]; // 回调数值
     }
 }
 
+- (void)textViewDidChange:(UITextView *)textView{
+    // 判断代理是否正确
+    if ([self.tableView.delegate conformsToProtocol:@protocol(AxcEventChangeTableViewCellDelegate)]) {
+        
+        id<AxcEventChangeTableViewCellDelegate> delegate = (id<AxcEventChangeTableViewCellDelegate>)self.tableView.delegate;
+        
+        CGFloat newHeight = [self computedTextHeightWithTextView:self.noteTextView];
+        CGFloat oldHeight = [delegate tableView:self.tableView heightForRowAtIndexPath:self.cellIndexPath];
+        if (fabs(newHeight - oldHeight) > 0.01) {
+            if (newHeight > oldHeight) { // 大于之前的默认值才更新
+                // 回调更新主控制器的数据
+                if ([delegate respondsToSelector:@selector(changeTextViewCellHeight:IndexPath:)]) {
+                    [delegate changeTextViewCellHeight:newHeight IndexPath:self.cellIndexPath];
+                }
+            }
+            // 刷新高度但是不关闭键盘
+            [self.tableView beginUpdates];
+            [self.tableView endUpdates];
+        }
+        
+        if (self.delegate && [self.delegate respondsToSelector:@selector(changeNoteString:)]) {
+            [self.delegate changeNoteString:textView.text]; // 回调备注
+        }
+    }
+}
+
+- (CGFloat)computedTextHeightWithTextView:(UITextView *)textView{
+    return [textView sizeThatFits:CGSizeMake(textView.frame.size.width, FLT_MAX)].height + TextViewMarginValue;
+}
+
+- (UITableView *)tableView
+{
+    UIView *tableView = self.superview;
+    while (![tableView isKindOfClass:[UITableView class]] && tableView) {
+        tableView = tableView.superview;
+    }
+    return (UITableView *)tableView;
+}
+
+
 #pragma mark - 懒加载
+- (NSIndexPath *)cellIndexPath{
+    return [self.tableView indexPathForCell:self];
+}
+
+- (UITextView *)noteTextView{
+    if (!_noteTextView) {
+        _noteTextView = [[UITextView alloc] init];
+        _noteTextView.delegate = self;
+        _noteTextView.dataDetectorTypes = UIDataDetectorTypeAll;
+        _noteTextView.layer.masksToBounds = YES;
+        _noteTextView.layer.cornerRadius = 5;
+        _noteTextView.layer.borderWidth = 1;
+        _noteTextView.layer.borderColor = [[UIColor AxcUI_CloudColor] CGColor];
+        _noteTextView.scrollEnabled = NO;
+        
+        [self addSubview:_noteTextView];
+        [_noteTextView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.mas_equalTo(TextViewFrameMargin);
+            make.left.mas_equalTo(TextViewFrameMargin);
+            make.right.mas_equalTo(-TextViewFrameMargin);
+            make.bottom.mas_equalTo(-TextViewFrameMargin);
+        }];
+    }
+    return _noteTextView;
+}
+
 - (AxcUI_StarRatingView *)priorityStartRatingView{
     if (!_priorityStartRatingView) {
         _priorityStartRatingView = [[AxcUI_StarRatingView alloc] init];

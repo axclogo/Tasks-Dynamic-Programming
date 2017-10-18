@@ -37,12 +37,14 @@ UITableViewDelegate
 
 @property(nonatomic,strong)UITableView *tableView;
 
-@property(nonatomic, strong)NSArray *dataArray;
+@property(nonatomic, strong)NSMutableArray *dataArray;
 
 @property(nonatomic, strong)AxcEventChangeHeaderView *tableHeaderView;
 @property(nonatomic, strong)AxcPlanningFooterView *planningFooterView;
 
 @property(nonatomic, assign)BOOL modelChangeState;
+
+@property(nonatomic, assign)CGFloat textViewCellHeight;
 
 @end
 
@@ -63,6 +65,11 @@ UITableViewDelegate
     }];
     self.axcPickSelectorView.delegate = self;
     
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [IQKeyboardManager sharedManager].enable = YES;
 }
 
 // 点击了返回
@@ -89,34 +96,37 @@ UITableViewDelegate
 
 //MARK: 滚轮回调
 - (void)AxcPickSelectorView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
-    // 一旦触发滚轮，说明修改
-    self.modelChangeState = YES;
     NSArray *elementsArr = self.selectedPickModelArray[component];
     AxcConditionsBaseModel *conditionsBaseModel = elementsArr[row];
 
     [self.axcDatabaseManagement changeEventModel:self.changeEventModel
                                  ConditionsModel:conditionsBaseModel
                                   WithProperties:component]; // 修改属性
+    
+    self.modelChangeState = YES; // 一旦触发滚轮，说明修改
     [self reloadUI];
 }
 //MARK: 优先级回调
 - (void)changePriority:(CGFloat)priority{
-    self.modelChangeState = YES; // 一旦触发，说明修改
     self.changeEventModel.priority = priority;
-    [self setPlanningFooterViewState]; // 只刷新头脚
+    self.modelChangeState = YES; // 一旦触发，说明修改
+}
+//MARK: 备注回调
+- (void)changeNoteString:(NSString *)noteString{
+    self.changeEventModel.noteString = noteString;
+    self.modelChangeState = YES; // 一旦触发，说明修改
 }
 
-//MARK: 刷新相关UI
-- (void)reloadUI{
-    self.dataArray = nil;
-    [self.tableView reloadData];
-    [self setPlanningFooterViewState];
+
+
+
+// 刷新textViewCell高度的回调
+- (void)changeTextViewCellHeight:(CGFloat)height IndexPath:(NSIndexPath *)cellIndexPath{
+    NSMutableDictionary *M_Dic = [NSMutableDictionary dictionaryWithDictionary:self.dataArray[cellIndexPath.section]];
+    [M_Dic setValue:@(height) forKey:kEventRowHeight];
+    [self.dataArray replaceObjectAtIndex:cellIndexPath.section withObject:M_Dic];
 }
 
-- (void)setPlanningFooterViewState{
-    _planningFooterView.titleLabel.text = PlanningFooterTitleString;
-    _planningFooterView.titleLabel.backgroundColor = PlanningFooterTitleColor;
-}
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     AxcEventType cellType = indexPath.section;
@@ -124,9 +134,9 @@ UITableViewDelegate
     NSDictionary *rowMsgDic = self.dataArray[indexPath.section];
     NSArray *rowArray = [rowMsgDic objectForKey:kEventSectionContent];
     NSDictionary *modelMsgDic = rowArray[indexPath.row];
-    cell.type = cellType;
-    cell.modelMsgDic = modelMsgDic;
-    if (cellType == AxcEventTypePriority) cell.delegate = self;
+    cell.type = cellType;   // 传入展示类型
+    cell.modelMsgDic = modelMsgDic; // 传入展示数据
+    if (cellType == AxcEventTypePriority || cellType == AxcEventTypeNoteString) cell.delegate = self;
     return cell;
 }
 - (NSInteger )numberOfSectionsInTableView:(UITableView *)tableView{
@@ -147,7 +157,7 @@ UITableViewDelegate
 - (CGFloat )tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSDictionary *dic = self.dataArray[indexPath.section];
     CGFloat height = [[dic objectForKey:kEventRowHeight] floatValue];
-    return height;
+    return MAX(30.0, height);
 }
 - (CGFloat )tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     NSDictionary *dic = self.dataArray[section];
@@ -156,12 +166,27 @@ UITableViewDelegate
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (!indexPath.section) { // 第一个
+        [self.view endEditing:YES]; // 移除响应者
         [self AxcBase_popDataPickView:self.selectedPickContentArray];
         [self AxcBase_dataPickSelectedWithModel:self.changeEventModel]; // 选中相应元素
     }
 }
 
-
+#pragma mark - SET
+- (void)setModelChangeState:(BOOL)modelChangeState{
+    _modelChangeState = modelChangeState;
+    [self setPlanningFooterViewState]; // 刷新头脚
+}
+//MARK: 刷新头脚
+- (void)setPlanningFooterViewState{
+    _planningFooterView.titleLabel.text = PlanningFooterTitleString;
+    _planningFooterView.titleLabel.backgroundColor = PlanningFooterTitleColor;
+}
+//MARK: 刷新相关UI
+- (void)reloadUI{
+    self.dataArray = nil;
+    [self.tableView reloadData];
+}
 #pragma mark - 生成函数
 - (NSArray <NSDictionary *>*)createFourElementsArray{
     NSMutableArray *fourElementsArray = [NSMutableArray array];
@@ -185,6 +210,24 @@ UITableViewDelegate
 
 
 #pragma mark - 懒加载
+- (CGFloat)textViewCellHeight{
+    if (!_textViewCellHeight) { // 不能为0
+        // 模拟一个Cell来计算预先高度
+        AxcEventChangeTableViewCell *cell = [[AxcEventChangeTableViewCell alloc] init];
+        UITextView *cellTextViewPointer = cell.noteTextView; // 获取指针
+        cellTextViewPointer.text = self.changeEventModel.noteString;    // 赋值字符
+        cellTextViewPointer.axcUI_Size = CGSizeMake(kScreenWidth - TextViewMarginValue, TextViewCellDefaultHeight); // 模拟大小
+        CGFloat height = [cell computedTextHeightWithTextView:cellTextViewPointer]; // 计算高度
+        
+        if (height > TextViewCellDefaultHeight) { // 大于默认值
+            _textViewCellHeight = height;
+        }else{
+            _textViewCellHeight = TextViewCellDefaultHeight;
+        }
+    }
+    return _textViewCellHeight;
+}
+
 - (AxcPlanningFooterView *)planningFooterView{
     if (!_planningFooterView) {
         _planningFooterView = [[AxcPlanningFooterView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 60)];
@@ -204,18 +247,22 @@ UITableViewDelegate
     return _tableHeaderView;
 }
 
-- (NSArray *)dataArray{
+- (NSMutableArray *)dataArray{
     if (!_dataArray) {
         
         CGFloat sectionHeight = 30;
-        _dataArray = @[@{kEventSectionTitle:@"事件四要素",kEventSectionContent:[self createFourElementsArray],
-                         kEventSectionHeight:@(sectionHeight),kEventRowHeight:@30 },
-                       @{kEventSectionTitle:@"事件模拟描述",kEventSectionContent:[self simulationDescribe],
-                         kEventSectionHeight:@(sectionHeight),kEventRowHeight:@60 },
-                       @{kEventSectionTitle:@"事件优先级（非必选项）",kEventSectionContent:@[@{kElementsContent:@(self.changeEventModel.priority)}],
-                         kEventSectionHeight:@(sectionHeight),kEventRowHeight:@70 },
-                       @{kEventSectionTitle:@"事件创建时间",kEventSectionContent:@[@{kElementsContent:self.changeEventModel.addDate}],
-                         kEventSectionHeight:@(sectionHeight),kEventRowHeight:@30 }];
+        
+        NSArray *dataArr = @[@{kEventSectionTitle:@"事件四要素",kEventSectionContent:[self createFourElementsArray],
+                               kEventSectionHeight:@(sectionHeight),kEventRowHeight:@30 },
+                             @{kEventSectionTitle:@"事件模拟描述",kEventSectionContent:[self simulationDescribe],
+                               kEventSectionHeight:@(sectionHeight),kEventRowHeight:@60 },
+                             @{kEventSectionTitle:@"事件优先级（非必选项）",kEventSectionContent:@[@{kElementsContent:@(self.changeEventModel.priority)}],
+                               kEventSectionHeight:@(sectionHeight),kEventRowHeight:@70 },
+                             @{kEventSectionTitle:@"事件备注（非必选项）",kEventSectionContent:@[@{kElementsContent:self.changeEventModel.noteString}],
+                               kEventSectionHeight:@(sectionHeight),kEventRowHeight:@(self.textViewCellHeight) },
+                             @{kEventSectionTitle:@"事件创建时间",kEventSectionContent:@[@{kElementsContent:self.changeEventModel.addDate}],
+                               kEventSectionHeight:@(sectionHeight),kEventRowHeight:@30 }];
+        _dataArray = [NSMutableArray arrayWithArray:dataArr];
     }
     return _dataArray;
 }
@@ -228,6 +275,7 @@ UITableViewDelegate
         _tableView.tableFooterView = self.planningFooterView;
         _tableView.tableHeaderView = self.tableHeaderView;
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        _tableView.estimatedRowHeight = 100;
 
         [_tableView registerNib:[UINib nibWithNibName:@"AxcEventChangeTableViewCell"
                                                bundle:nil]

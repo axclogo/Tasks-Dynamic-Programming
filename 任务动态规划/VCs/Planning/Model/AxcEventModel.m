@@ -43,7 +43,7 @@
 
 - (NSString *)completeDate{
     if (!_completeDate) {
-        _completeDate = @"-未知-";
+        _completeDate = defaultPlaceholderText;
     }
     return _completeDate;
 }
@@ -55,7 +55,8 @@
     [saveDic setObject:self.name.copy  forKey:ModelName];
     [saveDic setObject:@(self.priority) forKey:ModelPriority];
     [saveDic setObject:self.addDate.copy  forKey:ModelAddDate];
-    
+    [saveDic setObject:self.noteString.copy  forKey:ModelNoteString];
+
     [saveDic setObject:[self.triggerObject BaseModelWithDic] forKey:EventModelTriggerObject];
     [saveDic setObject:[self.triggerLocation BaseModelWithDic] forKey:EventModelTriggerLocation];
     [saveDic setObject:[self.performObject BaseModelWithDic] forKey:EventModelPerformObject];

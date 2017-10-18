@@ -149,6 +149,10 @@ const struct AxcConditionsFunctionOption AxcCFOK = {
                 [otherELSE_Array addObject:eventModel];
             }
         }];
+        // 相同分类组中的事件需要再以执行地点的优先级进行升序操作
+        conditions = (NSMutableArray *)[self Axc_DMP_ObjectPriorityWithArrayForSortingWithArray:conditions
+                                                                                      Ascending:YES
+                                                                            OperationProperties:AxcOperationPropertiesPerformLocation];
         // 替换更新集合
         [functionCollectionArray replaceObjectAtIndex:idx withObject:conditions];
         idx ++;
@@ -157,6 +161,7 @@ const struct AxcConditionsFunctionOption AxcCFOK = {
     [functionCollectionArray addObject:otherELSE_Array];
     return functionCollectionArray;
 }
+
 
 // 对特殊分组进行遍历，并且以所有小分组进行优先级升序排序
 - (NSArray <AxcEventModel *>*)groupingAscendingOrder:(NSArray <NSArray <AxcEventModel *>*>*)orderArr
@@ -237,6 +242,26 @@ const struct AxcConditionsFunctionOption AxcCFOK = {
     return threadArray;
 }
 
+// 对事件中，某个对象的优先级进行排序
+- (NSArray *)Axc_DMP_ObjectPriorityWithArrayForSortingWithArray:(NSArray <AxcEventModel *>*)objectArray
+                                                      Ascending:(BOOL )ascending
+                                            OperationProperties:(AxcOperationProperties )operationProperties{
+    NSMutableArray <AxcEventModel *>*eventArray_M = [NSMutableArray arrayWithArray:objectArray];
+    [eventArray_M enumerateObjectsUsingBlock:^(AxcEventModel * _Nonnull i_obj, NSUInteger i_idx, BOOL * _Nonnull stop) {
+        [eventArray_M enumerateObjectsUsingBlock:^(AxcEventModel * _Nonnull j_obj, NSUInteger j_idx, BOOL * _Nonnull stop) {
+            AxcConditionsBaseModel *i_objP = [self Axc_DMP_SwitchConditionsModelWithObj:i_obj
+                                                                    OperationProperties:operationProperties];
+            AxcConditionsBaseModel *j_objP = [self Axc_DMP_SwitchConditionsModelWithObj:j_obj
+                                                                    OperationProperties:operationProperties];
+            // 根据是否升序进行三目
+            if ([self TernaryJudgmentAscending:ascending M1:j_objP M2:i_objP
+                                     Parameter:AxcParameterPropertiesPriority]) { // 优先级数值小(高)（优先级数值越小，级别越低）
+                [eventArray_M exchangeObjectAtIndex:i_idx withObjectAtIndex:j_idx];
+            }
+        }];
+    }];
+    return eventArray_M;
+}
 
 // 根据事件属性对象的优先级进行排列
 - (NSArray <AxcBaseModel *>*)Axc_DMP_ObjectPriorityWithArray:(NSArray <AxcBaseModel *>*)objectArray

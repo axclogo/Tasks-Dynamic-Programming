@@ -8,13 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
-#define ModelName      @"name"
-#define ModelPriority  @"priority"
-#define ModelAddDate   @"addDate"
+#define ModelName       @"name"
+#define ModelAddDate    @"addDate"
+#define ModelPriority   @"priority"
+#define ModelNoteString @"noteString"
 
-#define baseKeyArray @[ModelName,ModelPriority,ModelAddDate]
+#define baseKeyArray @[ModelName,ModelPriority,ModelAddDate,ModelNoteString]
 
 #define BaseDateFormat @"yyyy年MM月dd日 HH:mm"
+
+#define defaultPlaceholderText @"nothing"
 
 #define MaxPriority 10
 
@@ -29,6 +32,8 @@
 // 添加日期
 @property(nonatomic, strong)NSString *addDate;
 
+// 备注
+@property(nonatomic, strong)NSString *noteString;
 
 // 实例函数
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
