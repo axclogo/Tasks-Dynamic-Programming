@@ -32,6 +32,7 @@ UITableViewDelegate
 ,UITableViewDataSource
 ,AxcPickSelectorViewDelegate
 ,AxcEventChangeTableViewCellDelegate
+,AxcEventChangeHeaderViewDelegate
 
 >
 
@@ -54,9 +55,10 @@ UITableViewDelegate
     [super viewDidLoad];
     
     self.title = self.changeEventModel.name; // 标题名
-    
+    // 创建UI
     [self createUI];
-    
+    // 监听键盘
+    [self AxcBase_registeredKeyboardObserver];
 }
 
 - (void)createUI{
@@ -85,6 +87,17 @@ UITableViewDelegate
     }else{
         return YES;
     }
+}
+// 键盘出现
+- (void)AxcBase_keyboardWillShow:(NSNotification *)notification{
+    self.navRightBarButtonItem.title = @"完成";
+}
+// 键盘消失
+- (void)AxcBase_keyboardWillHide:(NSNotification *)notification{
+    self.navRightBarButtonItem.title = nil;
+}
+- (void)AxcBase_clickCustomRightItem{
+    [self.view endEditing:YES];
 }
 
 #pragma mark - 复用函数
@@ -116,7 +129,11 @@ UITableViewDelegate
     self.changeEventModel.noteString = noteString;
     self.modelChangeState = YES; // 一旦触发，说明修改
 }
-
+//MARK: 大标题回调
+- (void)titleDidChange:(NSString *)newTitle{
+    self.changeEventModel.name = newTitle;
+    self.modelChangeState = YES; // 一旦触发，说明修改
+}
 
 
 
@@ -242,6 +259,7 @@ UITableViewDelegate
 - (AxcEventChangeHeaderView *)tableHeaderView{
     if (!_tableHeaderView) {
         _tableHeaderView = [[AxcEventChangeHeaderView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 50)];
+        _tableHeaderView.delegate = self;
         _tableHeaderView.title = self.title;
     }
     return _tableHeaderView;

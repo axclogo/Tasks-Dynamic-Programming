@@ -8,7 +8,6 @@
 
 #import "AxcPlanningTableViewCell.h"
 
-#import "AMUC_Obj.h"
 
 @implementation AxcPlanningTableViewCell
 
@@ -42,15 +41,12 @@
     
     CGFloat priority = _model.priority;
     self.leftColorView.hidden = !priority; // 优先级没有则不显示
-    if (priority <= MaxPriority/2) { // 优先级为最大值的一半
-        self.leftColorView.backgroundColor = [UIColor AxcUI_EmeraldColor];
-    }else{ // 大于一半
-        self.leftColorView.backgroundColor = SysRedColor;
-    }
+    // 根据优先级获取颜色
+    self.leftColorView.backgroundColor = [AMUC_Obj getPriorityColorWithPriority:priority];
+
     
     
     
 }
-
 
 @end

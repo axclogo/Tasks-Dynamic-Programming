@@ -33,10 +33,11 @@
         [mainAttStr appendAttributedString:triggerObjectName];
         [mainAttStr appendAttributedString:[self AS_WithContent:@"将在" Color:color]];
         [mainAttStr appendAttributedString:triggerLocationName];
-        [mainAttStr appendAttributedString:[self AS_WithContent:@"和" Color:color]];
-        [mainAttStr appendAttributedString:performObjectName];
-        [mainAttStr appendAttributedString:[self AS_WithContent:@"共同完成" Color:color]];
+        [mainAttStr appendAttributedString:[self AS_WithContent:@"把" Color:color]];
         [mainAttStr appendAttributedString:modelName];
+        [mainAttStr appendAttributedString:[self AS_WithContent:@"交给" Color:color]];
+        [mainAttStr appendAttributedString:performObjectName];
+        [mainAttStr appendAttributedString:[self AS_WithContent:@"完成" Color:color]];
 
     }else if ([[DMP Axc_PlaceDifferent_And_PeopleDifferent:model] integerValue]){// 如果地点不同，行动者不同
         
@@ -84,7 +85,9 @@
 // 生成谓词富文本
 + (AxcAS *)AS_WithContent:(NSString *)content Color:(UIColor *)color{
     AxcAS *attrStr = [[AxcAS alloc] initWithString:[NSString stringWithFormat:@" %@ ",content]];
-    if (color) [attrStr addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, attrStr.length)];
+    UIColor *MainTextColor = color;
+    if (!MainTextColor) MainTextColor = [UIColor blackColor];
+    [attrStr addAttribute:NSForegroundColorAttributeName value:MainTextColor range:NSMakeRange(0, attrStr.length)];
     return attrStr;
 }
 
@@ -173,6 +176,14 @@
     NSDateComponents *d = [cal components:unitFlags fromDate:dateBefore toDate:dateAfter options:0];
     
     return d;
+}
+
++ (UIColor *)getPriorityColorWithPriority:(CGFloat )priority{
+    if (priority <= MaxPriority/2) { // 优先级为最大值的一半
+        return [UIColor AxcUI_EmeraldColor];
+    }else{ // 大于一半
+        return SysRedColor;
+    }
 }
 
 @end

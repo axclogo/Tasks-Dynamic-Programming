@@ -16,7 +16,13 @@ make.bottom.mas_equalTo(0)
 #define SysRedColor RGB(252, 61, 57)
 
 // 主题色
+// 紫色
 #define Axc_ThemeColor [UIColor AxcUI_AmethystColor]
+// 淡黄
+#define Axc_ThemeColorOneCollocation RGB(244,243,192)
+// 浅蓝
+#define Axc_ThemeColorTwoCollocation RGB(91,141,195)
+
 
 // RGB颜色
 #define RGBA(r,g,b,a) [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:a]

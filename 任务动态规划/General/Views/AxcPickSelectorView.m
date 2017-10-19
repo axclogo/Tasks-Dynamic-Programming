@@ -127,7 +127,7 @@
 - (UILabel *)titleLabel{
     if (!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
-        _titleLabel.backgroundColor = [UIColor AxcUI_WetAsphaltColor];
+        _titleLabel.backgroundColor = Axc_ThemeColorTwoCollocation;
         _titleLabel.textAlignment = NSTextAlignmentCenter;
         _titleLabel.textColor = [UIColor whiteColor];
         _titleLabel.text = @"请选择";
@@ -140,7 +140,7 @@
     if (!_subTitleLabel) {
         _subTitleLabel = [[UILabel alloc] init];
         _subTitleLabel.textAlignment = NSTextAlignmentCenter;
-        _subTitleLabel.textColor = [UIColor AxcUI_WetAsphaltColor];
+        _subTitleLabel.textColor = Axc_ThemeColorTwoCollocation;
         _subTitleLabel.alpha = 0.7;
         [self addSubview:_subTitleLabel];
     }

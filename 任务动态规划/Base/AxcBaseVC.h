@@ -16,8 +16,6 @@
 #import "AxcPickSelectorView.h"
 // 共用对象
 #import "AxcParameterObj.h"
-// 模型UI控制器
-#import "AMUC_Obj.h"
 // 专用简易展示事件的Cell和Key
 #import "AxcPlanningTableViewCell.h"
 #define tableCellKey @"kAxcPlanningTableViewCell"
@@ -82,6 +80,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 // 根据Model来使得滚轮自动选中相应元素
 - (void)AxcBase_dataPickSelectedWithModel:(AxcEventModel *)model;
+
+#pragma mark - 关于共用通知
+// 设置键盘监听
+- (void)AxcBase_registeredKeyboardObserver;
+//当键盘出现
+- (void)AxcBase_keyboardWillShow:(NSNotification *)notification;
+//当键退出
+- (void)AxcBase_keyboardWillHide:(NSNotification *)notification;
 
 
 #pragma maek - 关于共用布局函数

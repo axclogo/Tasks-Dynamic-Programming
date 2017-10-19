@@ -38,8 +38,7 @@
 
 // 事件模型
 #import "AxcDMP_Algorithm.h"
-// 模型数据控制器
-#import "AMUC_Obj.h"
+
 
 // 行动数据类型
 typedef NS_ENUM(NSInteger, AxcActionDataType) {

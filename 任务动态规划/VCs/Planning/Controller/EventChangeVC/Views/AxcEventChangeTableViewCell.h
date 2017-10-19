@@ -50,6 +50,7 @@ typedef NS_ENUM(NSInteger, AxcEventType) {
 
 @property(nonatomic, strong)NSString *titleString;
 
+
 // 副标题
 @property (strong, nonatomic) UILabel *subtitleLabel;
 // 模拟描述Label
@@ -57,7 +58,7 @@ typedef NS_ENUM(NSInteger, AxcEventType) {
 // 优先级
 @property(nonatomic, strong)AxcUI_StarRatingView *priorityStartRatingView;
 // 备注textView
-@property(nonatomic, strong)UITextView *noteTextView;
+@property(nonatomic, strong)AxcBaseTextView *noteTextView;
 
 // 计算文本高度// 计算文本高度（仅用于计算textView的实时动态高度）
 - (CGFloat )computedTextHeightWithTextView:(UITextView *)textView;

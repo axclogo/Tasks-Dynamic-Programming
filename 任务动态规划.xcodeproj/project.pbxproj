@@ -152,6 +152,10 @@
 		EAAFAE4E1F6FBF1E005F066A /* AxcDMP_Algorithm.m in Sources */ = {isa = PBXBuildFile; fileRef = EAAFAE4D1F6FBF1E005F066A /* AxcDMP_Algorithm.m */; };
 		EAAFAE511F7290F8005F066A /* AxcModelManagementVC.m in Sources */ = {isa = PBXBuildFile; fileRef = EAAFAE501F7290F8005F066A /* AxcModelManagementVC.m */; };
 		EAAFAE541F72954D005F066A /* AxcDatabaseManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = EAAFAE531F72954D005F066A /* AxcDatabaseManagement.m */; };
+		EACE8B381F988D3B008D03E0 /* AxcBottomBannerThirdView.m in Sources */ = {isa = PBXBuildFile; fileRef = EACE8B371F988D3B008D03E0 /* AxcBottomBannerThirdView.m */; };
+		EAD9FB251F98455E0095F976 /* AxcBottomBannerSecondView.m in Sources */ = {isa = PBXBuildFile; fileRef = EAD9FB241F98455E0095F976 /* AxcBottomBannerSecondView.m */; };
+		EAD9FB291F9881870095F976 /* AxcBaseTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = EAD9FB281F9881870095F976 /* AxcBaseTextView.m */; };
+		EAD9FB2C1F98828B0095F976 /* AxcInstructionsLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = EAD9FB2B1F98828B0095F976 /* AxcInstructionsLabel.m */; };
 		EAF2D5531F7C9B58007569CB /* AxcParameterObj.m in Sources */ = {isa = PBXBuildFile; fileRef = EAF2D5521F7C9B58007569CB /* AxcParameterObj.m */; };
 		EAF2D5591F7CF343007569CB /* AxcBottomBannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = EAF2D5581F7CF343007569CB /* AxcBottomBannerView.m */; };
 		EAF2D55D1F7CF4E3007569CB /* AxcBottomBannerFirstView.m in Sources */ = {isa = PBXBuildFile; fileRef = EAF2D55C1F7CF4E3007569CB /* AxcBottomBannerFirstView.m */; };
@@ -472,6 +476,14 @@
 		EAAFAE501F7290F8005F066A /* AxcModelManagementVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AxcModelManagementVC.m; sourceTree = "<group>"; };
 		EAAFAE521F72954D005F066A /* AxcDatabaseManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AxcDatabaseManagement.h; sourceTree = "<group>"; };
 		EAAFAE531F72954D005F066A /* AxcDatabaseManagement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AxcDatabaseManagement.m; sourceTree = "<group>"; };
+		EACE8B361F988D3B008D03E0 /* AxcBottomBannerThirdView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AxcBottomBannerThirdView.h; sourceTree = "<group>"; };
+		EACE8B371F988D3B008D03E0 /* AxcBottomBannerThirdView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AxcBottomBannerThirdView.m; sourceTree = "<group>"; };
+		EAD9FB231F98455E0095F976 /* AxcBottomBannerSecondView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AxcBottomBannerSecondView.h; sourceTree = "<group>"; };
+		EAD9FB241F98455E0095F976 /* AxcBottomBannerSecondView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AxcBottomBannerSecondView.m; sourceTree = "<group>"; };
+		EAD9FB271F9881870095F976 /* AxcBaseTextView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AxcBaseTextView.h; sourceTree = "<group>"; };
+		EAD9FB281F9881870095F976 /* AxcBaseTextView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AxcBaseTextView.m; sourceTree = "<group>"; };
+		EAD9FB2A1F98828B0095F976 /* AxcInstructionsLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AxcInstructionsLabel.h; sourceTree = "<group>"; };
+		EAD9FB2B1F98828B0095F976 /* AxcInstructionsLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AxcInstructionsLabel.m; sourceTree = "<group>"; };
 		EAF2D5511F7C9B58007569CB /* AxcParameterObj.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AxcParameterObj.h; sourceTree = "<group>"; };
 		EAF2D5521F7C9B58007569CB /* AxcParameterObj.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AxcParameterObj.m; sourceTree = "<group>"; };
 		EAF2D5571F7CF343007569CB /* AxcBottomBannerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AxcBottomBannerView.h; sourceTree = "<group>"; };
@@ -559,6 +571,8 @@
 			children = (
 				EAF2D56B1F8C8F8A007569CB /* AxcBaseLabel.h */,
 				EAF2D56C1F8C8F8A007569CB /* AxcBaseLabel.m */,
+				EAD9FB2A1F98828B0095F976 /* AxcInstructionsLabel.h */,
+				EAD9FB2B1F98828B0095F976 /* AxcInstructionsLabel.m */,
 			);
 			name = Label;
 			sourceTree = "<group>";
@@ -668,6 +682,7 @@
 		EAAFAC8D1F6FA176005F066A /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				EAD9FB261F98816F0095F976 /* TextView */,
 				EAF2D5671F8C8DE2007569CB /* TextFiled */,
 				EAF2D5631F7E254D007569CB /* NavBaseView */,
 				EA1D85211F73F4C000EA9AE3 /* Label */,
@@ -1507,6 +1522,15 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		EAD9FB261F98816F0095F976 /* TextView */ = {
+			isa = PBXGroup;
+			children = (
+				EAD9FB271F9881870095F976 /* AxcBaseTextView.h */,
+				EAD9FB281F9881870095F976 /* AxcBaseTextView.m */,
+			);
+			name = TextView;
+			sourceTree = "<group>";
+		};
 		EAF2D5501F7C9B34007569CB /* Obj */ = {
 			isa = PBXGroup;
 			children = (
@@ -1523,6 +1547,10 @@
 			children = (
 				EAF2D55B1F7CF4E3007569CB /* AxcBottomBannerFirstView.h */,
 				EAF2D55C1F7CF4E3007569CB /* AxcBottomBannerFirstView.m */,
+				EAD9FB231F98455E0095F976 /* AxcBottomBannerSecondView.h */,
+				EAD9FB241F98455E0095F976 /* AxcBottomBannerSecondView.m */,
+				EACE8B361F988D3B008D03E0 /* AxcBottomBannerThirdView.h */,
+				EACE8B371F988D3B008D03E0 /* AxcBottomBannerThirdView.m */,
 				EAF2D55E1F7CF5F8007569CB /* AxcBottomBannerCollectionViewCell.h */,
 				EAF2D55F1F7CF5F8007569CB /* AxcBottomBannerCollectionViewCell.m */,
 				EAF2D5601F7CF5F8007569CB /* AxcBottomBannerCollectionViewCell.xib */,
@@ -1754,6 +1782,7 @@
 				EAAFAC951F6FA26C005F066A /* AxcBaseTabBarVC.m in Sources */,
 				EAAFADED1F6FA834005F066A /* AxcUI_BannerView.m in Sources */,
 				EAAFAE001F6FA834005F066A /* AxcUI_PhotoBrowser.m in Sources */,
+				EAD9FB291F9881870095F976 /* AxcBaseTextView.m in Sources */,
 				EA3B0C931F91F121000291C0 /* AxcRecordTableViewCell.m in Sources */,
 				EAAFADF61F6FA834005F066A /* AxcUI_BarrageView.m in Sources */,
 				EAAFADCF1F6FA834005F066A /* Axc_WebImageDownloaderOperation.m in Sources */,
@@ -1793,10 +1822,12 @@
 				EAAFAE511F7290F8005F066A /* AxcModelManagementVC.m in Sources */,
 				EAAFAE1B1F6FA834005F066A /* AxcUI_ProgressLoopView.m in Sources */,
 				EAAFAC981F6FA298005F066A /* AxcMainTabBarVC.m in Sources */,
+				EACE8B381F988D3B008D03E0 /* AxcBottomBannerThirdView.m in Sources */,
 				EAAFADBD1F6FA834005F066A /* NSString+AxcTextCalculation.m in Sources */,
 				EAAFADDB1F6FA834005F066A /* UIView+AxcAutoresizingMask.m in Sources */,
 				EAAFAE011F6FA834005F066A /* AxcUI_PlayerVideo.m in Sources */,
 				EAAFADE81F6FA834005F066A /* AxcTweenTimingFunctions.m in Sources */,
+				EAD9FB251F98455E0095F976 /* AxcBottomBannerSecondView.m in Sources */,
 				EAAFADEA1F6FA834005F066A /* AxcUI_BadgeView.m in Sources */,
 				EAAFAC601F6FA13D005F066A /* ViewController.m in Sources */,
 				EAAFADE11F6FA834005F066A /* UIView+BadgeView.m in Sources */,
@@ -1867,6 +1898,7 @@
 				EAAFAE3E1F6FB1A7005F066A /* AxcEventModel.m in Sources */,
 				EAAFADE91F6FA834005F066A /* AxcUI_BadgeInteractionView.m in Sources */,
 				EAAFAE021F6FA834005F066A /* AxcUI_PlayerVideoViewController.m in Sources */,
+				EAD9FB2C1F98828B0095F976 /* AxcInstructionsLabel.m in Sources */,
 				EAAFADCB1F6FA834005F066A /* Axc_ImageCache.m in Sources */,
 				EAAFAE101F6FA834005F066A /* AxcPlayerMenuMask.m in Sources */,
 				EAF2D5611F7CF5F8007569CB /* AxcBottomBannerCollectionViewCell.m in Sources */,

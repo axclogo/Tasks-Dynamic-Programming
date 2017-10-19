@@ -383,23 +383,12 @@ AxcPickSelectorViewDelegate
     [self settingLeftButtonText];
     // 刷新文字
     [self reloadTitleForHeaderString];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow:)
-                                                 name:UIKeyboardWillShowNotification
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillHide:)
-                                                 name:UIKeyboardWillHideNotification
-                                               object:nil];
-    
-
+    // 添加键盘监听
+    [self AxcBase_registeredKeyboardObserver];
 }
 
-
-
 //当键盘出现
-- (void)keyboardWillShow:(NSNotification *)notification{
+- (void)AxcBase_keyboardWillShow:(NSNotification *)notification{
     //获取键盘的高度
     NSDictionary *userInfo = [notification userInfo];
     NSValue *value = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
@@ -411,7 +400,7 @@ AxcPickSelectorViewDelegate
 }
 
 //当键退出
-- (void)keyboardWillHide:(NSNotification *)notification{
+- (void)AxcBase_keyboardWillHide:(NSNotification *)notification{
     self.view.axcUI_Y = 0;
 }
 

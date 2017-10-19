@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "AMUC_Obj.h"
+#import "AxcDatabaseManagement.h"
 
 
 @protocol AxcBottomBannerViewDelegate <NSObject >
@@ -29,6 +29,8 @@
 @property(nonatomic, strong)AxcEventModel *eventModel;
 
 @property(nonatomic, strong)id <AxcBottomBannerViewDelegate >delegate;
+
+@property(nonatomic, strong)AxcDatabaseManagement *ADM;
 
 - (void)clickPickOKBtn;
 

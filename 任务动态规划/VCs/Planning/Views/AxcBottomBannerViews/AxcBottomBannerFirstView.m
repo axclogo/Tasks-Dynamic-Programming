@@ -16,7 +16,6 @@
 
 - (instancetype)init{
     if (self == [super init]) {
-        self.backgroundColor = [UIColor AxcUI_ConcreteColor];
         
         [self createUI];
     }
@@ -28,7 +27,7 @@
     __weak typeof(self)weakSelf = self;
     // 事件名称
     self.eventTitleTextFiled.placeholder = @"* 请输入事件名称";
-    self.eventTitleTextFiled.axcUI_PlaceholderLabel.textColor = [UIColor AxcUI_WetAsphaltColor];
+    self.eventTitleTextFiled.axcUI_PlaceholderLabel.textColor = self.eventTitleTextFiled.textColor;
     self.eventTitleTextFiled.axcUI_PlaceholderLabel.font = [UIFont systemFontOfSize:14];
     self.eventTitleTextFiled.axcUI_PlaceholderLabel.textAlignment = NSTextAlignmentCenter;
     self.eventTitleTextFiled.textAlignment = NSTextAlignmentCenter;
@@ -72,7 +71,7 @@
 - (AxcBaseButton *)addEventBtn{
     if (!_addEventBtn) {
         _addEventBtn = [[AxcBaseButton alloc] init];
-        _addEventBtn.backgroundColor = [UIColor AxcUI_WetAsphaltColor];
+        _addEventBtn.backgroundColor = Axc_ThemeColorTwoCollocation;
         _addEventBtn.titleLabel.font = [UIFont systemFontOfSize:13];
         [_addEventBtn setTitle:@"添加事件" forState:UIControlStateNormal];
         [_addEventBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -97,9 +96,13 @@
 - (AxcBaseButton *)eventFourElementsBtn{
     if (!_eventFourElementsBtn) {
         _eventFourElementsBtn = [[AxcBaseButton alloc] init];
+        _eventFourElementsBtn.backgroundColor = [UIColor whiteColor];
+        _eventFourElementsBtn.layer.borderWidth = 0.5;
+        _eventFourElementsBtn.layer.borderColor = [Axc_ThemeColorTwoCollocation CGColor];
         _eventFourElementsBtn.titleLabel.font = [UIFont systemFontOfSize:14];
         _eventFourElementsBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
         [_eventFourElementsBtn setTitle:@"* 请选择事件要素" forState:UIControlStateNormal];
+        [_eventFourElementsBtn setTitleColor:self.eventTitleTextFiled.textColor forState:UIControlStateNormal];
         [self addSubview:_eventFourElementsBtn];
     }
     return _eventFourElementsBtn;
@@ -116,6 +119,8 @@
     if (!_eventTitleTextFiled) {
         _eventTitleTextFiled = [[AxcBaseTextFiled alloc] init];
         _eventTitleTextFiled.delegate = self;
+        _eventTitleTextFiled.layer.borderWidth = 0.5;
+        _eventTitleTextFiled.layer.borderColor = [Axc_ThemeColorTwoCollocation CGColor];
 //        _eventTitleTextFiled.leftAlignment = 10;
         
         __weak typeof(self)weakSelf = self;

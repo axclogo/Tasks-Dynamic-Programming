@@ -28,4 +28,7 @@ typedef NSMutableAttributedString AxcAS;
 // 获取当前时间
 + (NSString *)getNowTime;
 
+/** 根据优先级获取颜色 */
++ (UIColor *)getPriorityColorWithPriority:(CGFloat )priority;
+
 @end

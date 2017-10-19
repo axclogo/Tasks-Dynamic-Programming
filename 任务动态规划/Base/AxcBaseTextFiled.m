@@ -12,13 +12,11 @@
 
 - (instancetype)init{
     if (self == [super init]) {
-        self.backgroundColor = [UIColor AxcUI_CloudColor];
+        self.backgroundColor = [UIColor whiteColor];
         self.layer.masksToBounds = YES;
         self.layer.cornerRadius = 5;
-//        self.layer.borderWidth = 0.5;
-//        self.layer.borderColor = [[UIColor AxcUI_BelizeHoleColor] CGColor];
         
-        self.textColor = [UIColor AxcUI_WetAsphaltColor];
+        self.textColor = Axc_ThemeColorTwoCollocation;
         self.font = [UIFont systemFontOfSize:13];
         
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -46,5 +44,6 @@
         self.AxcBase_textFiledShouldChange(self.text);
     }
 }
+
 
 @end

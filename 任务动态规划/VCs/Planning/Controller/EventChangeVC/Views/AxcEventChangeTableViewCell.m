@@ -10,7 +10,6 @@
 
 #import "AxcEventChangeTableViewCell.h"
 
-#import "AMUC_Obj.h"
 
 #define WeakSelf __weak typeof(self) weakSelf = self;
 
@@ -29,7 +28,7 @@
     if (self.textLabel.text.length) {
         self.textLabel.text = nil;
     }
-    if (_noteTextView) {
+    if (_noteTextView) { // 不能用.语法，防止因为懒加载而消耗无意义的内存
         [_noteTextView removeFromSuperview];
         _noteTextView = nil;
     }
@@ -152,15 +151,11 @@
     return [self.tableView indexPathForCell:self];
 }
 
-- (UITextView *)noteTextView{
+- (AxcBaseTextView *)noteTextView{
     if (!_noteTextView) {
-        _noteTextView = [[UITextView alloc] init];
+        _noteTextView = [[AxcBaseTextView alloc] init];
         _noteTextView.delegate = self;
-        _noteTextView.dataDetectorTypes = UIDataDetectorTypeAll;
-        _noteTextView.layer.masksToBounds = YES;
-        _noteTextView.layer.cornerRadius = 5;
-        _noteTextView.layer.borderWidth = 1;
-        _noteTextView.layer.borderColor = [[UIColor AxcUI_CloudColor] CGColor];
+        
         _noteTextView.scrollEnabled = NO;
         
         [self addSubview:_noteTextView];

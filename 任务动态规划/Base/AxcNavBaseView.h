@@ -8,10 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+#import "AxcEventModel.h"
+
 @interface AxcNavBaseView : UIView
 
 
 @property(nonatomic, strong)AxcUI_Label *titleLabel;
+
+
+- (AxcUI_Label *)createcontentTitleLabelWithText:(NSString *)text;
 
 
 @end

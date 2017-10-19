@@ -10,6 +10,24 @@
 
 @implementation AxcNavBaseView
 
+- (instancetype)init{
+    if (self == [super init]) {
+        self.backgroundColor = Axc_ThemeColorOneCollocation;
+
+    }
+    return self;
+}
+
+- (AxcUI_Label *)createcontentTitleLabelWithText:(NSString *)text{
+    AxcUI_Label *label = [[AxcUI_Label alloc] init];
+    label.font = [UIFont systemFontOfSize:12];
+    label.text = text;
+    label.axcUI_Size = [text AxcUI_rectWithStringFont:label.font.pointSize].size;
+    label.textColor = Axc_ThemeColorTwoCollocation;
+    
+    return label;
+}
+
 
 
 

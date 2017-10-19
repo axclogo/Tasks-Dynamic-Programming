@@ -10,6 +10,8 @@
 #import "AxcBottomBannerCollectionViewCell.h"
 
 #import "AxcBottomBannerFirstView.h"
+#import "AxcBottomBannerSecondView.h"
+#import "AxcBottomBannerThirdView.h"
 
 
 #define AXCFOOTER_WIDTH 64
@@ -20,6 +22,7 @@
 ,UICollectionViewDataSource
 ,UICollectionViewDelegateFlowLayout
 ,AxcBottomBannerFirstViewDelegate
+,AxcBottomBannerSecondViewDelegate
 
 >
 
@@ -37,6 +40,11 @@
 @property(nonatomic, strong)NSArray <UIView *>*cellViewsArray;
 // 第一个View
 @property(nonatomic, strong)AxcBottomBannerFirstView *firstView;
+// 第二个View
+@property(nonatomic, strong)AxcBottomBannerSecondView *secondView;
+// 第三个View
+@property(nonatomic, strong)AxcBottomBannerThirdView *thirdView;
+
 
 @end
 
@@ -62,7 +70,7 @@ static NSString *banner_footer = @"banner_footer";
     return 1;
 }
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
-    return 3;
+    return self.NavBarTitleArray.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
@@ -94,21 +102,21 @@ static NSString *banner_footer = @"banner_footer";
                                                               forIndexPath:theIndexPath];
         self.footer = (AxcBannerFooter *)footer;
         // 配置footer的提示语
-        self.footer.idleTitle = @"拖动进入下一页";
-        self.footer.triggerTitle = @"释放进入下一页";
+        self.footer.idleTitle = @"    拖动查看更多事项";
+        self.footer.triggerTitle = @"    释放进入更多事项";
     }
     return footer;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath{
-    return  CGSizeMake(kScreenWidth, kScreenWidth/2);
+    return collectionView.axcUI_Size;
 }
 
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
     [self endEditing:YES];
     static CGFloat lastOffset;
-    CGFloat footerDisplayOffset = (scrollView.contentOffset.x - (self.frame.size.width * 2));
+    CGFloat footerDisplayOffset = (scrollView.contentOffset.x - (self.frame.size.width * (self.NavBarTitleArray.count -1)));
     // footer的动画
     if (footerDisplayOffset > 0){
         // 开始出现footer
@@ -121,7 +129,6 @@ static NSString *banner_footer = @"banner_footer";
         }
         lastOffset = footerDisplayOffset - AXCFOOTER_WIDTH;
     }
-    
 }
 
 // 设置标题
@@ -136,21 +143,19 @@ static NSString *banner_footer = @"banner_footer";
         }];
         lastPage = page;
     }
-    
 }
 
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
-    
-    CGFloat footerDisplayOffset = (scrollView.contentOffset.x - (self.frame.size.width * 2));
+    CGFloat footerDisplayOffset = (scrollView.contentOffset.x - (self.frame.size.width * (self.NavBarTitleArray.count -1)));
     // 通知footer代理
-    if (footerDisplayOffset > AXCFOOTER_WIDTH) {
+    if (footerDisplayOffset >= AXCFOOTER_WIDTH) {
         if ([self.delegate respondsToSelector:@selector(AxcUI_bottomBannerViewFooterDidTrigger)]) {
             [self.delegate AxcUI_bottomBannerViewFooterDidTrigger];
         }
     }
-    
 }
+
 
 // textFiled编辑中
 - (void)eventTextFiledTextEding{
@@ -182,6 +187,17 @@ static NSString *banner_footer = @"banner_footer";
     }
 }
 
+// 优先级被触发
+- (void)starRatingViewDidChangePriority:(CGFloat )priority{
+    self.eventModel.priority = priority;
+}
+
+// 备注改变
+- (void)noteTextViewDidChange:(NSString *)noteText{
+    self.eventModel.noteString = noteText;
+}
+
+
 - (void)Axc_click_addEventBtn{
     if (self.eventModel.name.length &&
         self.eventModel.triggerObject.name.length &&
@@ -196,19 +212,42 @@ static NSString *banner_footer = @"banner_footer";
 }
 
 #pragma mark - 懒加载
-
 - (NSArray *)NavBarTitleArray{
     if (!_NavBarTitleArray) {
-        _NavBarTitleArray = @[@"设置事件主属性",@"设置事件非必填项",@"其他"];
+        _NavBarTitleArray = @[@"添加事件基础属性",@"优先级和备注（非必填）",@"快速添加常用事项"];
     }
     return _NavBarTitleArray;
+}
+
+- (NSArray <UIView *>*)cellViewsArray{
+    if (!_cellViewsArray) {
+        _cellViewsArray = @[self.firstView,self.secondView,self.thirdView];
+    }
+    return _cellViewsArray;
+}
+
+- (AxcBottomBannerThirdView *)thirdView{
+    if (!_thirdView) {
+        _thirdView = [[AxcBottomBannerThirdView alloc] init];
+        // 测试
+        _thirdView.commonlyUsedEventArray = [self.ADM getWaitingPlanningEventList];
+    }
+    return _thirdView;
+}
+
+- (AxcBottomBannerSecondView *)secondView{
+    if (!_secondView) {
+        _secondView = [[AxcBottomBannerSecondView alloc] init];
+        _secondView.delegate = self;
+    }
+    return _secondView;
 }
 
 - (AxcUI_Label *)NavBarLabel{
     if (!_NavBarLabel) {
         _NavBarLabel = [[AxcUI_Label alloc] init];
         _NavBarLabel.backgroundColor = [UIColor clearColor];
-        _NavBarLabel.textColor = [UIColor AxcUI_ConcreteColor];
+        _NavBarLabel.textColor = [UIColor whiteColor];
         _NavBarLabel.font = [UIFont systemFontOfSize:15];
         _NavBarLabel.textAlignment =NSTextAlignmentCenter;
         
@@ -227,7 +266,7 @@ static NSString *banner_footer = @"banner_footer";
 - (UIView *)NavBarView{
     if (!_NavBarView) {
         _NavBarView = [[UIView alloc] init];
-        _NavBarView.backgroundColor = [UIColor whiteColor];
+        _NavBarView.backgroundColor = Axc_ThemeColorTwoCollocation;
 
         _NavBarView.layer.shadowColor = [UIColor blackColor].CGColor;
         _NavBarView.layer.shadowOffset = CGSizeMake(1,0);
@@ -253,12 +292,6 @@ static NSString *banner_footer = @"banner_footer";
     return _eventModel;
 }
 
-- (NSArray <UIView *>*)cellViewsArray{
-    if (!_cellViewsArray) {
-        _cellViewsArray = @[self.firstView];
-    }
-    return _cellViewsArray;
-}
 
 - (AxcBottomBannerFirstView *)firstView{
     if (!_firstView) {
@@ -278,19 +311,21 @@ static NSString *banner_footer = @"banner_footer";
         
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
         layout.minimumInteritemSpacing = 0;
-        layout.minimumLineSpacing = 1;
+        layout.minimumLineSpacing = 0;
         layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
         layout.sectionInset = UIEdgeInsetsZero;
-        layout.footerReferenceSize = CGSizeMake(AXCFOOTER_WIDTH, self.frame.size.height);
+        layout.footerReferenceSize = CGSizeMake(AXCFOOTER_WIDTH , self.frame.size.height);
 
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero
                                              collectionViewLayout:layout];
         [_collectionView.collectionViewLayout invalidateLayout];
         _collectionView.pagingEnabled = YES;
+        _collectionView.alwaysBounceHorizontal = YES; // 小于等于一页时, 允许bounce
         _collectionView.backgroundColor = [UIColor AxcUI_CloudColor];
         _collectionView.delegate = self;
         _collectionView.dataSource = self;
         _collectionView.showsHorizontalScrollIndicator = NO;
+        
         [_collectionView registerNib:[UINib nibWithNibName:@"AxcBottomBannerCollectionViewCell" bundle:nil]
           forCellWithReuseIdentifier:@"axc"];
         // 注册 \ 配置footer
@@ -299,6 +334,13 @@ static NSString *banner_footer = @"banner_footer";
         [self addSubview:self.collectionView];
     }
     return  _collectionView;
+}
+
+- (AxcDatabaseManagement *)ADM{
+    if (!_ADM) {
+        _ADM = [[AxcDatabaseManagement alloc] init];
+    }
+    return _ADM;
 }
 
 @end

@@ -49,6 +49,19 @@
 - (void)AxcBase_LayoutFitUIWithCross:(BOOL )cross{}
 
 #pragma mark - 预设函数
+// 设置键盘监听
+- (void)AxcBase_registeredKeyboardObserver{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(AxcBase_keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(AxcBase_keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
+}
+
+
 // 获取行动者、地点的字符结构集合
 - (NSArray <NSString *>*)getActionNPListWithType:(AxcActionDataType )type
                                           Format:(NSString *(^)(NSString *name,NSString *priority))formatBlock {
@@ -191,10 +204,12 @@
 
 
 // 子类重写触发
-- (void)AxcBase_clickRightBtn:(UIBarButtonItem *)sender{}
-- (void)AxcBase_clickCustomRightItem{}
-- (void)AxcBase_clickRightItems:(UIBarButtonItem *)sender{}
-- (void)AxcBase_clickCustomLeftItem{}
+- (void)AxcBase_clickRightBtn:(UIBarButtonItem *)sender{} // 点击右按钮
+- (void)AxcBase_clickCustomRightItem{}  // 点击右按钮
+- (void)AxcBase_clickRightItems:(UIBarButtonItem *)sender{} // 点击右按钮组
+- (void)AxcBase_clickCustomLeftItem{}   // 点击左按钮
+- (void)AxcBase_keyboardWillShow:(NSNotification *)notification{}//当键盘出现
+- (void)AxcBase_keyboardWillHide:(NSNotification *)notification{}//当键退出
 
 #pragma mark - GET/SET
 - (CGFloat)axcTabBarHeight{
@@ -208,6 +223,13 @@
 }
 - (CGFloat )axcTopBarAllHeight{
     return self.axcStatusBarHeight + self.axcNavBarHeight;
+}
+
+// 销毁控制器
+- (void)dealloc{
+    // 移除键盘监听
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 #pragma mark - 懒加载

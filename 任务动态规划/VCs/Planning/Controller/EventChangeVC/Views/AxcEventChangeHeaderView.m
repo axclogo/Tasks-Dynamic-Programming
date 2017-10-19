@@ -8,6 +8,10 @@
 
 #import "AxcEventChangeHeaderView.h"
 
+
+#define WeakSelf __weak typeof(self) weakSelf = self;
+
+
 @implementation AxcEventChangeHeaderView
 
 - (instancetype)initWithFrame:(CGRect)frame{
@@ -20,25 +24,42 @@
 - (void)setTitle:(NSString *)title{
     _title = title;
     
-    self.titleLabel.text = _title;
-    self.titleLabel.axcUI_Width = [_title AxcUI_widthWithStringFont:self.titleLabel.font];
+    self.titleTextField.text = _title;
 
 }
 
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    if ([string isEqualToString:@"\n"]) { // 取消
+        [textField resignFirstResponder];
+        return NO;
+    }
+    return YES;
+}
 
-- (AxcUI_Label *)titleLabel{
-    if (!_titleLabel) {
-        _titleLabel = [[AxcUI_Label alloc] init];
-        _titleLabel.textAlignment = NSTextAlignmentLeft;
-        _titleLabel.font = [UIFont fontWithName:@"Arial-BoldItalicMT"size:20];
-        _titleLabel.axcUI_textEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-        
-        [self addSubview:_titleLabel];
-        [_titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+- (AxcBaseTextFiled *)titleTextField{
+    if (!_titleTextField) {
+        WeakSelf;
+        _titleTextField = [[AxcBaseTextFiled alloc] init];
+        _titleTextField.font = [UIFont fontWithName:@"Arial-BoldItalicMT"size:20];
+        _titleTextField.delegate = self;
+        _titleTextField.backgroundColor = [UIColor clearColor];
+        _titleTextField.layer.masksToBounds = NO;
+        _titleTextField.layer.cornerRadius = 0;
+        _titleTextField.textColor = nil;
+        _titleTextField.leftAlignment = 10;
+        // 设置回调
+        _titleTextField.AxcBase_textFiledShouldChange = ^(NSString *text) {
+            // 这里回调使用的点语法不会造成递归
+            [weakSelf.delegate titleDidChange:weakSelf.titleTextField.text];
+        };
+
+        [self addSubview:_titleTextField];
+        [_titleTextField mas_makeConstraints:^(MASConstraintMaker *make) {
             AxcWholeFrameLayout;
         }];
     }
-    return _titleLabel;
+    return _titleTextField;
 }
+
 
 @end
