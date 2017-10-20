@@ -56,6 +56,7 @@ typedef NS_ENUM(NSInteger, AxcAccessDataType) {
 
 @property(nonatomic, strong)NSUserDefaults *userDefaults;
 
+
 //  获取所有行动信息列表
 - (NSArray <AxcConditionsBaseModel *>*)getObjectModelListWithType:(AxcActionDataType )type;
 // 存储所有行动信息列表
@@ -71,12 +72,13 @@ typedef NS_ENUM(NSInteger, AxcAccessDataType) {
          ConditionsModel:(AxcConditionsBaseModel *)conditionsModel
           WithProperties:(AxcOperationProperties)properties;
 
+/* ------------------------ 规划列表管理函数 ------------------------ */
 // 待规划事件存储函数
 - (void)saveWaitingPlanningEventListWithArray:(NSArray <AxcEventModel *>*)eventList;
 // 获取待规划事件函数
 - (NSArray <AxcEventModel *>*)getWaitingPlanningEventList;
 
-
+/* ------------------------ 记录列表管理函数 ------------------------ */
 // 添加已规划数据函数(二维数组)
 - (void)addAlreadyPlanningEventListWithArray:(NSArray <NSArray <AxcEventModel *>*>*)eventList WithTitle:(NSString *)title;
 
@@ -85,5 +87,16 @@ typedef NS_ENUM(NSInteger, AxcAccessDataType) {
 // 获取已规划数据函数
 - (NSArray <NSDictionary *>*)getAlreadyPlanningEventList;
 
+/* ------------------------ 常用列表管理函数 ------------------------ */
+// 存储常用列表
+- (void)saveCommonlyUsedListWithArray:(NSArray <AxcEventModel *>*)eventList;
+// 添加一个到常用列表
+- (void)addCommonlyUsedListWithModel:(AxcEventModel *)model;
+// 获取常用列表
+- (NSArray <AxcEventModel *>*)getCommonlyUsedList;
 
+// 单例
++ (AxcDatabaseManagement *)sharedDatabaseManagement;
+
+    
 @end

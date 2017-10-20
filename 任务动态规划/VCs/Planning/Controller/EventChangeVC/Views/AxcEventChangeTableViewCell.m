@@ -136,8 +136,11 @@
     return [textView sizeThatFits:CGSizeMake(textView.frame.size.width, FLT_MAX)].height + TextViewMarginValue;
 }
 
-- (UITableView *)tableView
-{
+
+
+
+#pragma mark - 懒加载
+- (UITableView *)tableView{
     UIView *tableView = self.superview;
     while (![tableView isKindOfClass:[UITableView class]] && tableView) {
         tableView = tableView.superview;
@@ -145,8 +148,6 @@
     return (UITableView *)tableView;
 }
 
-
-#pragma mark - 懒加载
 - (NSIndexPath *)cellIndexPath{
     return [self.tableView indexPathForCell:self];
 }
@@ -155,6 +156,7 @@
     if (!_noteTextView) {
         _noteTextView = [[AxcBaseTextView alloc] init];
         _noteTextView.delegate = self;
+        _noteTextView.layer.borderColor = [Axc_ThemeColor CGColor];
         
         _noteTextView.scrollEnabled = NO;
         
@@ -214,7 +216,6 @@
             make.right.mas_equalTo(-30);
             make.height.mas_equalTo(44);
             make.centerY.mas_equalTo(0);
-//            make.width.mas_equalTo();
         }];
     }
     return _subtitleLabel;

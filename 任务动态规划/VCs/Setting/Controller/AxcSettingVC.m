@@ -72,9 +72,17 @@ UITableViewDelegate
     switch (indexPath.section) {
         // 行动条件组
         case 0:{
-            AxcModelManagementVC *modelManagementVC = [[AxcModelManagementVC alloc] init];
-            modelManagementVC.modelListStyle = indexPath.row;
-            [self.navigationController pushViewController:modelManagementVC animated:YES];
+            switch (indexPath.row) {
+                case 2: // 常用事件列表
+                    
+                    break;
+                    
+                default:{ // 0、1
+                    AxcModelManagementVC *modelManagementVC = [[AxcModelManagementVC alloc] init];
+                    modelManagementVC.modelListStyle = indexPath.row;
+                    [self.navigationController pushViewController:modelManagementVC animated:YES];
+                } break;
+            }
         } break;
             
         default:  break;

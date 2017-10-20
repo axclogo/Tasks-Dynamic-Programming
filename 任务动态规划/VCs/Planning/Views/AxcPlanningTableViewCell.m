@@ -23,6 +23,49 @@
     }];
 }
 
+
+- (void)setMenuItemsTitle:(NSArray<NSString *> *)menuItemsTitle{
+    _menuItemsTitle = menuItemsTitle;
+    if (_menuItemsTitle.count) {
+        //对于cell设置长按点击事件
+        UILongPressGestureRecognizer *longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
+        [self addGestureRecognizer:longPressGestureRecognizer];
+    }
+}
+
+- (void)longPress:(UILongPressGestureRecognizer *)gestureRecognizer {
+    if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+        
+        [self becomeFirstResponder];
+        //定义菜单
+        AxcBaseMenuController *menu = [AxcBaseMenuController sharedMenuController];
+        
+        NSMutableArray *items = [NSMutableArray array];
+        [self.menuItemsTitle enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            UIMenuItem *menuItem = [[UIMenuItem alloc] init];
+            menuItem.title = obj;
+            // 标记到方法名
+            NSString *SelectorString = [NSString stringWithFormat:@"AxcCellMenuControllerAction_%ld:",idx];
+            SEL faSelector = NSSelectorFromString(SelectorString);
+            menuItem.action = faSelector;
+            [items addObject:menuItem];
+        }];
+        // 设置转移对象
+        menu.obj = self;
+        //设定菜单显示的区域，显示再Rect的最上面居中
+        [menu setTargetRect:self.frame inView:self.tableView];
+        [menu setMenuItems:items];
+        [menu setMenuVisible:YES animated:YES];
+    }
+}
+
+
+
+-(BOOL)canBecomeFirstResponder{
+    return YES;
+}
+
+
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 
@@ -48,5 +91,15 @@
     
     
 }
+
+#pragma mark - 懒加载
+- (UITableView *)tableView{
+    UIView *tableView = self.superview;
+    while (![tableView isKindOfClass:[UITableView class]] && tableView) {
+        tableView = tableView.superview;
+    }
+    return (UITableView *)tableView;
+}
+
 
 @end

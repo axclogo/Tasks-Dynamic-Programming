@@ -26,6 +26,9 @@
 #define BtnBaseTag   100
 #define LabelBaseTag 200
 
+#define CommonlyUsedActionTitle      @"添加到常用事件"
+#define ForPlanningActionActionTitle @"添加到待规划"
+#define MenuItemsArray @[CommonlyUsedActionTitle,ForPlanningActionActionTitle]
 
 @interface AxcPlanningVC ()<
 AxcPickSelectorViewDelegate
@@ -33,7 +36,6 @@ AxcPickSelectorViewDelegate
 ,UITableViewDataSource
 ,AxcBottomBannerViewDelegate
 ,AxcEventChangeVCDelegate
-
 
 >
 
@@ -47,10 +49,7 @@ AxcPickSelectorViewDelegate
 
 // 展示已添加的任务列表
 @property(nonatomic, strong)UITableView *tableView;
-
-
-
-
+// 下方的滑动多选View
 @property(nonatomic, strong)AxcBottomBannerView *axcBottomBannerView;
 
 // 编辑时候选中的数组，用来存储下标
@@ -200,11 +199,15 @@ AxcPickSelectorViewDelegate
 - (void)AxcUI_click_addEventModel:(NSString *)eventTitle{
     self.addEventModel = self.axcBottomBannerView.eventModel;
     AxcEventModel *model = [self.addEventModel Axc_copy];
+    [self addEventModelWithForPlanningList:model]; // 添加到待规划列表
+}
+//MARK: 添加到待规划列表
+- (void)addEventModelWithForPlanningList:(AxcEventModel *)model{
     model.addDate = [AMUC_Obj getNowTime]; // 标签时间戳
     [self.eventDataArray insertObject:model atIndex:0]; // 将插入到最前
     [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]]
                           withRowAnimation:UITableViewRowAnimationMiddle];
-
+    
     [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]
                           atScrollPosition:UITableViewScrollPositionTop animated:YES];
     [self reloadTitleForHeaderString]; // 更新标题文字
@@ -295,6 +298,26 @@ AxcPickSelectorViewDelegate
     [self.tableView reloadData];
 }
 
+// 一定要实现与数组个数相同的函数下标
+// MARK: 从Menu添加到常用事件
+- (void)AxcCellMenuControllerAction_0:(AxcBaseMenuController *)sender {
+    AxcEventModel *model = [self getEventModelWithMenuController:sender];
+    [self.axcDatabaseManagement addCommonlyUsedListWithModel:model]; // 添加到常用列表
+}
+
+// MARK: 从Menu添加到待规划
+- (void)AxcCellMenuControllerAction_1:(AxcBaseMenuController *)sender {
+    AxcEventModel *model = [self getEventModelWithMenuController:sender];
+    [self addEventModelWithForPlanningList:[model Axc_copy]]; // 添加到待规划列表
+}
+
+// MARK: 获取模型
+- (AxcEventModel *)getEventModelWithMenuController:(AxcBaseMenuController *)menu{
+    AxcPlanningTableViewCell *cell = menu.obj;                     // 获取cell
+    NSIndexPath *indexPath =  [self.tableView indexPathForCell:cell];// 获取下标
+    return self.eventDataArray[indexPath.row];      // 获取Model
+}
+
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [IQKeyboardManager sharedManager].enable = NO;
@@ -314,6 +337,7 @@ AxcPickSelectorViewDelegate
     if (self.eventDataArray.count) {
         AxcEventModel *eventModel = self.eventDataArray[indexPath.row];
         cell.model = eventModel;
+        cell.menuItemsTitle = MenuItemsArray;  // 开启长摁菜单
         tableView.rowHeight = 70;
     }
     return cell;
@@ -366,6 +390,7 @@ AxcPickSelectorViewDelegate
     [self.axcDatabaseManagement saveWaitingPlanningEventListWithArray:self.eventDataArray];
     [self.tableView reloadData]; // 校准数据
 }
+
 
 #pragma mark - UI设置区
 - (void)AxcPlanningVC_createUI{

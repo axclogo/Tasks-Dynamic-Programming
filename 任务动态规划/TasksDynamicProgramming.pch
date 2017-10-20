@@ -26,6 +26,7 @@
 #import "AxcBaseLabel.h"
 #import "AxcBaseTextView.h"
 #import "AxcInstructionsLabel.h"
+#import "AxcBaseMenuController.h"
 
 // 模型数据控制器
 #import "AMUC_Obj.h"

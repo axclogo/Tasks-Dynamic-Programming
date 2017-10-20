@@ -52,6 +52,17 @@ static NSString *banner_footer = @"banner_footer";
 
 @implementation AxcBottomBannerView
 
+- (instancetype)init{
+    if (self == [super init]) {
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadThirdViewData:)
+                                                    name:Axc_ModelAddCommonlyUsedList object:nil];
+    }
+    return self;
+}
+
+- (void)reloadThirdViewData:(NSNotification *)notify{
+    self.thirdView.commonlyUsedEventArray = [self.ADM getCommonlyUsedList];
+}
 
 - (void)layoutSubviews{
     [super layoutSubviews];
@@ -211,6 +222,11 @@ static NSString *banner_footer = @"banner_footer";
     }
 }
 
+- (void)dealloc{
+    // 移除通知中心
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:Axc_ModelAddCommonlyUsedList object:nil];
+}
+
 #pragma mark - 懒加载
 - (NSArray *)NavBarTitleArray{
     if (!_NavBarTitleArray) {
@@ -229,8 +245,6 @@ static NSString *banner_footer = @"banner_footer";
 - (AxcBottomBannerThirdView *)thirdView{
     if (!_thirdView) {
         _thirdView = [[AxcBottomBannerThirdView alloc] init];
-        // 测试
-        _thirdView.commonlyUsedEventArray = [self.ADM getWaitingPlanningEventList];
     }
     return _thirdView;
 }
@@ -338,7 +352,7 @@ static NSString *banner_footer = @"banner_footer";
 
 - (AxcDatabaseManagement *)ADM{
     if (!_ADM) {
-        _ADM = [[AxcDatabaseManagement alloc] init];
+        _ADM = [AxcDatabaseManagement sharedDatabaseManagement];
     }
     return _ADM;
 }

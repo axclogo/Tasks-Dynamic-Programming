@@ -298,8 +298,8 @@ const struct AxcConditionsFunctionOption AxcCFOK = {
 - (NSString *)parameterProperties:(AxcParameterProperties)parameterProperties{
     NSString *parameterStr = nil;
     switch (parameterProperties) {
-        case AxcParameterPropertiesName:     parameterStr = @"name";     break;
-        case AxcParameterPropertiesPriority: parameterStr = @"priority"; break;
+        case AxcParameterPropertiesName:     parameterStr = ModelName;     break;
+        case AxcParameterPropertiesPriority: parameterStr = ModelPriority; break;
         default: break;
     }
     return parameterStr;

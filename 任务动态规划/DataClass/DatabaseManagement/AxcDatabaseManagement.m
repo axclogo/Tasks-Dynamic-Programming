@@ -12,10 +12,13 @@
 // saveKey
 #define AxcDatabaseManagementObjectModelList @"AxcDatabaseManagementObjectModelList"
 #define AxcDatabaseManagementLocationModelList @"AxcDatabaseManagementLocationModelList"
+
 // saveWaitingPlanningEventList
 #define AxcSaveWaitingPlanningEventList @"AxcSaveWaitingPlanningEventList_K"
 // saveAlreadyPlanningEventList
 #define AxcSaveAlreadyPlanningEventList @"AxcSaveAlreadyPlanningEventList_K"
+// saveCommonlyUsedList
+#define AxcSaveCommonlyUsedList @"AxcSaveCommonlyUsedList_K"
 
 
 @interface AxcDatabaseManagement ()
@@ -23,8 +26,36 @@
 @property(nonatomic ,strong)AxcDMP_Algorithm *axcDMP;
 
 @end
+// 单例设置
+static AxcDatabaseManagement    *_axcDatabaseManagement;
 
 @implementation AxcDatabaseManagement
+
+
+#pragma mark - 常用列表数据
+// 添加一个到常用列表
+- (void)addCommonlyUsedListWithModel:(AxcEventModel *)model{
+    NSMutableArray *dataArr = [NSMutableArray arrayWithArray: [self getCommonlyUsedList]];
+    [dataArr addObject:model];
+    [self saveCommonlyUsedListWithArray:dataArr];
+    // 发送通知
+    [[NSNotificationCenter defaultCenter]postNotificationName:Axc_ModelAddCommonlyUsedList
+                                                       object:nil
+                                                     userInfo:@{@"obj":model}];
+}
+// 存储常用列表
+- (void)saveCommonlyUsedListWithArray:(NSArray <AxcEventModel *>*)eventList{
+    NSArray *dataArr = [self conversionEventList:eventList];
+    [self saveData:dataArr WithKey:AxcSaveCommonlyUsedList];
+}
+// 获取常用列表
+- (NSArray <AxcEventModel *>*)getCommonlyUsedList{
+    NSArray <NSDictionary *>*eventList = [self getDataWithKey:AxcSaveCommonlyUsedList];
+    NSArray *dataArr = [self conversionEventList:eventList];
+    return dataArr;
+}
+
+#pragma mark - 已规划数据
 
 // 添加已规划数据函数(二维数组)
 - (void)addAlreadyPlanningEventListWithArray:(NSArray <NSArray <AxcEventModel *>*>*)eventList WithTitle:(NSString *)title{
@@ -70,28 +101,36 @@
     return MArray_1;
 }
 
+#pragma mark - 待规划数据
 
 // 存储待规划事件函数
 - (void)saveWaitingPlanningEventListWithArray:(NSArray <AxcEventModel *>*)eventList{
-    // 转换数据
-    NSMutableArray *dataArr = [NSMutableArray array];
-    [eventList enumerateObjectsUsingBlock:^(AxcEventModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        [dataArr addObject:[obj eventModelWithDic]];
-    }];
+    NSArray *dataArr = [self conversionEventList:eventList];
     [self saveData:dataArr WithKey:AxcSaveWaitingPlanningEventList];
 }
 // 获取待规划事件函数
 - (NSArray <AxcEventModel *>*)getWaitingPlanningEventList{
     NSArray <NSDictionary *>*eventList = [self getDataWithKey:AxcSaveWaitingPlanningEventList];
-    NSMutableArray *dataArr = [NSMutableArray array];
-    [eventList enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        AxcEventModel *model = [[AxcEventModel alloc] initWithDictionary:obj];
-        [dataArr addObject:model];
-    }];
+    NSArray *dataArr = [self conversionEventList:eventList];
     return dataArr;
 }
 
 
+// 转换数据
+- (NSArray *)conversionEventList:(NSArray *)eventList{
+    NSMutableArray *dataArr = [NSMutableArray array];
+    [eventList enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj isKindOfClass:[NSDictionary class]]) { // 字典
+            AxcEventModel *model = [[AxcEventModel alloc] initWithDictionary:obj];
+            [dataArr addObject:model];
+        }else{
+            [dataArr addObject:[obj eventModelWithDic]];
+        }
+    }];
+    return dataArr;
+}
+
+#pragma mark - 其他数据
 //  获取所有行动信息列表
 - (NSArray <AxcConditionsBaseModel *>*)getObjectModelListWithType:(AxcActionDataType )type{
     NSString *typeKey = [self keyWithType:type];
@@ -171,13 +210,14 @@
 - (NSString *)keyWithType:(AxcActionDataType )type{
     NSString *typeKey = nil;
     switch (type) {
-        case AxcActionDataTypeObjectModelList: typeKey = AxcDatabaseManagementObjectModelList; break;
+        case AxcActionDataTypeObjectModelList:  typeKey = AxcDatabaseManagementObjectModelList; break;
         case AxcActionDataTypeLocationModelList: typeKey = AxcDatabaseManagementLocationModelList; break;
         default: break;
     }
     return typeKey;
 }
 
+#pragma mark - 此处可独立封装成数据库存储
 // 存放一个数据到标记Key值
 - (void)saveData:(nullable id )data WithKey:(nonnull NSString *)aKey{
     if (data) {
@@ -205,5 +245,25 @@
     return [NSUserDefaults standardUserDefaults];
 }
 
+
+#pragma mark - 单例
++ (AxcDatabaseManagement *)sharedDatabaseManagement{
+    if (_axcDatabaseManagement == nil) {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{                    // 设置该线程仅进行一次初始化操作，该核心对象包括所含参数全为单例模式
+            _axcDatabaseManagement = [[AxcDatabaseManagement alloc] init];
+        });
+    }
+    return _axcDatabaseManagement;
+}
+
+// 线程安全
++ (instancetype)allocWithZone:(struct _NSZone *)zone{
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{                             // 为防止Alloc初始化 将alloc方法锁定
+        _axcDatabaseManagement = [super allocWithZone:zone];
+    });
+    return _axcDatabaseManagement;
+}
 @end
 

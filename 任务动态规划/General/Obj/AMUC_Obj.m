@@ -12,6 +12,7 @@
 // Axc Model UI Control
 @implementation AMUC_Obj
 
+#pragma mark - 富文本的生成
 + (AxcAS *)simulateEventDescriptionWithModel:(AxcEventModel *)model{
     return [self simulateEventDescriptionWithModel:model PredicateColor:nil];
 }
@@ -93,6 +94,7 @@
 
 
 #pragma mark - 时间转换
+// 获取当前时间
 + (NSString *)getNowTime{
     NSDate *date = [NSDate date];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
@@ -127,64 +129,56 @@
         return @"刚刚";
     }
 }
-
-#pragma mark - 私有方法
-+ (NSDate*)dateFromString:(NSString*)dateString andFormate:(NSString*)formateString
-{
-    if (dateString.length < 1) {
-        return [NSDate date];
-    }
-    
-    NSDateFormatter * formate = [[NSDateFormatter alloc]init];
-    [formate setDateFormat:formateString];
-    
-    NSDate * date = [formate dateFromString:dateString];
-    
-    return date;
-}
-
-+ (NSString*)dateTransform:(NSString*)dateString{
-    if (dateString.length<1) {
-        return @"";
-    }
-    
-    NSDateFormatter *formate = [[NSDateFormatter alloc]init];
-    [formate setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSS"];
-    
-    NSDate *date = [formate dateFromString:dateString];
-    
-    NSDateFormatter *resultFormate = [[NSDateFormatter alloc]init];
-    [resultFormate setDateFormat:@"yyyy-MM-dd HH:mm"];
-    
-    return [resultFormate stringFromDate:date];
-}
-
-/**
- *  计算时间差
- *
- *  @param dateBefore 时间1
- *  @param dateAfter  时间2
- *
- *  @return 时差 小时
- */
-+(NSDateComponents*)timeCal:(NSDate*)dateBefore dateAfter:(NSDate*)dateAfter;
-{
-    NSCalendar *cal = [NSCalendar currentCalendar];
-    
-    NSUInteger unitFlags = NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
-    
-    NSDateComponents *d = [cal components:unitFlags fromDate:dateBefore toDate:dateAfter options:0];
-    
-    return d;
-}
-
+#pragma mark - 根据优先级获取颜色
 + (UIColor *)getPriorityColorWithPriority:(CGFloat )priority{
-    if (priority <= MaxPriority/2) { // 优先级为最大值的一半
+    CGFloat medianPriority = MaxPriority/2;
+    if (priority < medianPriority) { // 优先级为最大值的一半
         return [UIColor AxcUI_EmeraldColor];
+    }else if (priority == medianPriority || priority == medianPriority + 1){
+        return [UIColor AxcUI_OrangeColor];
     }else{ // 大于一半
         return SysRedColor;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#pragma mark - 对象私有方法
++ (NSDate*)dateFromString:(NSString*)dateString andFormate:(NSString*)formateString{
+    if (dateString.length < 1) {
+        return [NSDate date];
+    }
+    NSDateFormatter * formate = [[NSDateFormatter alloc]init];
+    [formate setDateFormat:formateString];
+    NSDate * date = [formate dateFromString:dateString];
+    return date;
+}
+
+/** 计算时间差 */
++(NSDateComponents*)timeCal:(NSDate*)dateBefore dateAfter:(NSDate*)dateAfter;{
+    NSCalendar *cal = [NSCalendar currentCalendar];
+    NSUInteger unitFlags = NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
+    NSDateComponents *d = [cal components:unitFlags fromDate:dateBefore toDate:dateAfter options:0];
+    return d;
+}
+
+
 
 @end
 

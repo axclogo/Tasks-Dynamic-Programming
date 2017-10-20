@@ -288,7 +288,7 @@
 // 数据管理
 - (AxcDatabaseManagement *)axcDatabaseManagement{
     if (!_axcDatabaseManagement) {
-        _axcDatabaseManagement = [[AxcDatabaseManagement alloc] init];
+        _axcDatabaseManagement = [AxcDatabaseManagement sharedDatabaseManagement] ;
     }
     return _axcDatabaseManagement;
 }

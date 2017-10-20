@@ -11,7 +11,7 @@
 // 展示模型列表的类型
 typedef NS_ENUM(NSInteger, AxcModelListStyle) {
     AxcModelListStyleObjectModel,   // 行动者      0
-    AxcModelListStyleLocationModel  // 地点       1
+    AxcModelListStyleLocationModel  // 地点        1
 } ;
 
 @interface AxcModelManagementVC : AxcBaseVC
