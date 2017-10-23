@@ -8,8 +8,6 @@
 
 #import "AxcPlanningVC.h"
 
-#import "AxcPlanningFooterView.h"
-
 #import "MissionPlanningListVC.h"
 
 #import "AxcEventModel.h"
@@ -229,18 +227,11 @@ AxcPickSelectorViewDelegate
 }
 //MARK: 编辑状态则调用删除
 - (void)clickTableFooterDelected{
-    // 排序从小到大
-    NSArray *result = [self.selectedEventDataArray sortedArrayUsingComparator:^NSComparisonResult
-                                                     (id  _Nonnull obj1,
-                                                      id  _Nonnull obj2) { // 支持indexPath
-        return [obj1 compare:obj2]; //升序
-    }];
-    self.selectedEventDataArray = [NSMutableArray arrayWithArray:result]; // 转移
-    // 倒叙删除
-    [self.selectedEventDataArray enumerateObjectsWithOptions:NSEnumerationReverse // 倒叙
-                                                  usingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        [self removingSingleDelected:obj];
-    }];
+    // 升序后倒叙输出
+    [self AxcBase_ascendingEnumerationReverse:self.selectedEventDataArray
+                                   usingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                                       [self removingSingleDelected:obj]; // 循环调用单个删除函数
+                                   }];
     // 之后移除所有
     [self.selectedEventDataArray removeAllObjects];
     [self reloadTitleForHeaderString];
@@ -346,7 +337,7 @@ AxcPickSelectorViewDelegate
     return self.planningFooterView;
 }
 - (CGFloat )tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
-    return 60;
+    return AxcPlanningFooterViewHeight;
 }
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
     return self.titleForHeaderString;

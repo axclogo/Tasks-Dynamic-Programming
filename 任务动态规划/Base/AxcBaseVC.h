@@ -20,6 +20,10 @@
 #import "AxcPlanningTableViewCell.h"
 #define tableCellKey @"kAxcPlanningTableViewCell"
 
+// 删除专用脚和固定高度
+#import "AxcPlanningFooterView.h"
+#define AxcPlanningFooterViewHeight 60
+
 #define WeakSelf __weak typeof(self) weakSelf = self;
 
 #define NavRightBarEditTitle(a) a?@"完成":@"编辑"
@@ -28,6 +32,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AxcBaseVC : UIViewController
+#pragma mark - 关于共用函数
+// 升序操作后反向枚举输出
+- (void)AxcBase_ascendingEnumerationReverse:(NSArray *)array usingBlock:(void (NS_NOESCAPE ^)(id obj, NSUInteger idx, BOOL *stop))block;
 
 #pragma mark - 关于右按钮
 // 添加右按钮组

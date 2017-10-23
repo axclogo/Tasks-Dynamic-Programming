@@ -49,6 +49,23 @@
 - (void)AxcBase_LayoutFitUIWithCross:(BOOL )cross{}
 
 #pragma mark - 预设函数
+// 升序操作后反向枚举输出
+- (void)AxcBase_ascendingEnumerationReverse:(NSArray *)array usingBlock:(void (NS_NOESCAPE ^)(id obj, NSUInteger idx, BOOL *stop))block{
+    NSArray *dataArr = array;
+    // 排序从小到大
+    NSArray *result = [dataArr sortedArrayUsingComparator:^NSComparisonResult
+                       (id  _Nonnull obj1,
+                        id  _Nonnull obj2) { // 支持indexPath
+                           return [obj1 compare:obj2]; //升序
+                       }];
+    dataArr = [NSArray arrayWithArray:result]; // 转移
+    [dataArr enumerateObjectsWithOptions:NSEnumerationReverse // 倒叙
+                              usingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                                  block(obj,idx,stop);
+                              }];
+}
+
+
 // 设置键盘监听
 - (void)AxcBase_registeredKeyboardObserver{
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -249,23 +266,21 @@
 
 // 滚轮数组
 - (NSArray *)selectedPickContentArray{
-    if (!_selectedPickContentArray) {
 #define BlockFormat [NSString stringWithFormat:@"%@(%@)",name,priority]
-        // 在Block中设置Format
-        NSArray *ObjectModelArray = [self getActionNPListWithType:AxcActionDataTypeObjectModelList
-                                                           Format:^NSString *(NSString *name, NSString *priority) {
-                                                               return BlockFormat;
-                                                           }];
-        
-        NSArray *LocationModelArray = [self getActionNPListWithType:AxcActionDataTypeLocationModelList
-                                                             Format:^NSString *(NSString *name, NSString *priority) {
-                                                                 return BlockFormat;
-                                                             }];
-        _selectedPickContentArray = @[ObjectModelArray.copy,
-                                      LocationModelArray.copy,
-                                      ObjectModelArray.copy,
-                                      LocationModelArray.copy];
-    }
+    // 在Block中设置Format
+    NSArray *ObjectModelArray = [self getActionNPListWithType:AxcActionDataTypeObjectModelList
+                                                       Format:^NSString *(NSString *name, NSString *priority) {
+                                                           return BlockFormat;
+                                                       }];
+    
+    NSArray *LocationModelArray = [self getActionNPListWithType:AxcActionDataTypeLocationModelList
+                                                         Format:^NSString *(NSString *name, NSString *priority) {
+                                                             return BlockFormat;
+                                                         }];
+    _selectedPickContentArray = @[ObjectModelArray.copy,
+                                  LocationModelArray.copy,
+                                  ObjectModelArray.copy,
+                                  LocationModelArray.copy];
     return _selectedPickContentArray;
 }
 

@@ -49,6 +49,7 @@ UITableViewDelegate
     [self.axcDatabaseManagement addAlreadyPlanningEventListWithArray:self.dataArray WithTitle:name];
 }
 - (void)popInputFileNameAlent{
+    WeakSelf;
     NSArray *alentTitleArray = @[@"确定",@"取消"];
     __block UITextField *alentTextField ;
     [self AxcBase_PopAlertViewWithTitle:@"保存规划记录"
@@ -56,7 +57,7 @@ UITableViewDelegate
                                 Actions:alentTitleArray
                                 handler:^(UIAlertAction * _Nonnull action) {
                                     if (alentTextField.text.length) {
-                                        [self savePlanningEventListArrayWithName:alentTextField.text];
+                                        [weakSelf savePlanningEventListArrayWithName:alentTextField.text];
                                     }
                                 } TextFieldHandler:^(UITextField * _Nonnull textField) {
                                     alentTextField = textField;

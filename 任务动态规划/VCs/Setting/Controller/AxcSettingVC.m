@@ -69,25 +69,39 @@ UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    NSDictionary *sectionDic = self.dataArray[indexPath.section];
+    NSArray *sectionArr = [sectionDic objectForKey:SettingSectionList];
+    NSDictionary *rowDic = sectionArr[indexPath.row];
+
+    AxcBaseVC *settingPushVC = nil;
     switch (indexPath.section) {
         // 行动条件组
         case 0:{
+            
+
             switch (indexPath.row) {
                 case 2: // 常用事件列表
                     
                     break;
                     
                 default:{ // 0、1
-                    AxcModelManagementVC *modelManagementVC = [[AxcModelManagementVC alloc] init];
-                    modelManagementVC.modelListStyle = indexPath.row;
-                    [self.navigationController pushViewController:modelManagementVC animated:YES];
+                
+                    settingPushVC =[[AxcModelManagementVC alloc] init];
+                    ((AxcModelManagementVC *)settingPushVC).modelListStyle = indexPath.row;
+                    [self.navigationController pushViewController:settingPushVC animated:YES];
                 } break;
             }
+
+            
         } break;
+            
+        case 1:{
+            
+        }break;
             
         default:  break;
     }
-    
+    settingPushVC.title = [rowDic objectForKey:SettingCellTitle];
 }
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
     NSDictionary *dic = self.dataArray[section];

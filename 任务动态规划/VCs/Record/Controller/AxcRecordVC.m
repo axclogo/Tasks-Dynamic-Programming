@@ -17,8 +17,6 @@
 
 #import "AxcRecordTableViewCell.h"
 
-#import "AxcPlanningFooterView.h"
-
 #define RecordTableCellKey @"kAxcRecordTableViewCell_K"
 
 @interface AxcRecordVC ()<
@@ -105,18 +103,11 @@ UITableViewDelegate
 
 //MARK:点击了删除
 - (void)click_delectedBtn{
-    // 排序从小到大
-    NSArray *result = [self.deleteArray sortedArrayUsingComparator:^NSComparisonResult
-                       (id  _Nonnull obj1,
-                        id  _Nonnull obj2) { // 支持indexPath
-                           return [obj1 compare:obj2]; //升序
-                       }];
-    self.deleteArray = [NSMutableArray arrayWithArray:result]; // 转移
-    // 倒叙删除
-    [self.deleteArray enumerateObjectsWithOptions:NSEnumerationReverse // 倒叙
-                                                  usingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                                                      [self didLeftSlideDeleteAtIndexPath:obj];
-                                                  }];
+    // 升序后倒叙输出
+    [self AxcBase_ascendingEnumerationReverse:self.deleteArray
+                                   usingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                                       [self didLeftSlideDeleteAtIndexPath:obj];
+                                   }];
     // 之后移除所有
     [self.deleteArray removeAllObjects];
 }
@@ -167,7 +158,7 @@ UITableViewDelegate
     return self.planningFooterView;
 }
 - (CGFloat )tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
-    return 60;
+    return AxcPlanningFooterViewHeight;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     tableView.editing?[self didEditSelectRowAtIndexPath:indexPath]:[self didSelectRowAtIndexPath:indexPath];
